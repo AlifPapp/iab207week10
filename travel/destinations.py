@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from .models import Destination, Comment
 from .forms import DestinationForm, CommentForm
@@ -53,11 +54,13 @@ def check_upload_file(form):
 @login_required
 def comment(id):  
     form = CommentForm()  
+    date = datetime.now()
     #get the destination object associated to the page and the comment
     destination = db.session.scalar(db.select(Destination).where(Destination.id==id))
     if form.validate_on_submit():  
       #read the comment from the form
       comment = Comment(text=form.text.data, destination=destination,
+                        created_at=date,
                         user=current_user) 
       #here the back-referencing works - comment.destination is set
       # and the link is created
